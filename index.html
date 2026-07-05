@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Юрій &amp; Юлія — Запрошення на весілля</title>
+<meta name="description" content="Запрошуємо вас розділити з нами радість народження нашої сім'ї. 19 липня 2026.">
+<meta name="theme-color" content="#f8efe4">
+<meta property="og:title" content="Юрій та Юлія — Запрошення на весілля">
+<meta property="og:description" content="19 липня 2026 · Варшава">
+<meta property="og:image" content="images/01-cover.webp">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A4%8D%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#f8efe4;
+    --olive:#545330;
+    --gold:#b98d54;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html, body{height:100%; overflow:hidden; overscroll-behavior:none}
+  body{
+    background:var(--cream);
+    font-family:'Lora',Georgia,serif;
+    color:var(--olive);
+  }
+  /* Скролиться не документ, а цей контейнер: адресна панель браузера
+     не ховається, висота в'юпорта стабільна — жодних стрибків при snap */
+  .scroller{
+    position:fixed; inset:0;
+    overflow-y:auto;
+    scroll-snap-type:y mandatory;
+    scroll-behavior:smooth;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  /* ── Фулскрін-секції ─────────────────────────────── */
+  section{
+    position:relative;
+    height:100%;
+    scroll-snap-align:start;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+  }
+  .canvas{position:relative; line-height:0}
+  .canvas img{
+    display:block;
+    max-width:100vw; max-height:100vh; max-height:100dvh;
+    user-select:none; -webkit-user-drag:none;
+  }
+  /* Вертикальні екрани отримують вертикальні версії макетів через <picture> */
+
+  /* ── Плавна поява секцій ─────────────────────────── */
+  .reveal{opacity:0; transform:translateY(24px); transition:opacity .9s ease, transform .9s ease}
+  .reveal.visible{opacity:1; transform:none}
+  @media (prefers-reduced-motion: reduce){
+    .scroller{scroll-behavior:auto}
+    .reveal{opacity:1; transform:none; transition:none}
+  }
+  @media (hover: none) and (pointer: coarse){
+    .reveal{transform:none; transition:opacity .8s ease}
+  }
+
+  /* ── Таймер зворотного відліку (секція 1) ────────── */
+  .countdown{
+    position:absolute; left:50%; bottom:clamp(14px, 4vh, 40px);
+    transform:translateX(-50%);
+    display:flex; gap:clamp(10px,2.5vw,26px); align-items:baseline;
+    padding:.65em 1.4em;
+    background:rgba(248,239,228,.82);
+    backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    border:1px solid rgba(84,83,48,.28);
+    border-radius:999px;
+    white-space:nowrap;
+    z-index:2;
+  }
+  .countdown .unit{display:flex; flex-direction:column; align-items:center; min-width:2.4em}
+  .countdown .num{font-size:clamp(1.05rem,2.6vw,1.5rem); font-weight:600; font-variant-numeric:tabular-nums}
+  .countdown .lbl{font-size:clamp(.55rem,1.3vw,.7rem); letter-spacing:.14em; text-transform:uppercase; opacity:.75}
+  .countdown .heart{color:var(--gold); font-size:.9em; align-self:center}
+
+  /* ── Стрілка «гортайте вниз» ─────────────────────── */
+  .scroll-arrow{
+    position:absolute; left:50%; bottom:clamp(108px,17vh,160px);
+    transform:translateX(-50%);
+    width:46px; height:46px;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(248,239,228,.78);
+    backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);
+    border:1px solid rgba(185,141,84,.55);
+    border-radius:50%;
+    cursor:pointer;
+    z-index:2;
+    animation:bounce 2.4s ease-in-out infinite;
+    transition:opacity .5s ease, visibility .5s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .scroll-arrow svg{width:22px; height:22px; stroke:var(--olive); stroke-width:2.2;
+    fill:none; stroke-linecap:round; stroke-linejoin:round}
+  .scroll-arrow:hover{background:rgba(248,239,228,.95)}
+  .scroll-arrow.hidden{opacity:0; visibility:hidden}
+  @keyframes bounce{
+    0%,100%{transform:translate(-50%,0)}
+    50%{transform:translate(-50%,9px)}
+  }
+  @media (prefers-reduced-motion: reduce){ .scroll-arrow{animation:none} }
+  @media (orientation: portrait){ .scroll-arrow{display:none} .countdown{display:none} }
+
+  /* ── Клікабельні зони «Google Maps» (секція 3) ───── */
+  .hotspot{
+    position:absolute; display:block;
+    /* невидимі, але доступні для кліку й фокуса */
+    border-radius:6px;
+  }
+  .hotspot:focus-visible{outline:2px solid var(--gold); outline-offset:2px}
+  .hotspot.left{left:23.5%; top:80.6%; width:11%; height:7%}
+  .hotspot.right{left:65.4%; top:80.6%; width:11%; height:7%}
+  @media (orientation: portrait){
+    .hotspot.left{left:40%; top:54.7%; width:20%; height:3.8%}
+    .hotspot.right{left:40%; top:89.7%; width:20%; height:3.8%}
+  }
+  .hotspot.tg-qr{left:40.07%; top:36.03%; width:19.86%; height:35.28%}
+  .hotspot.tg-btn{left:38.52%; top:85.12%; width:23%; height:6.16%}
+  @media (orientation: portrait){
+    .hotspot.tg-qr{left:28.75%; top:30.80%; width:42.51%; height:23.92%}
+    .hotspot.tg-btn{left:26.73%; top:72.13%; width:46.55%; height:4.07%}
+  }
+</style>
+</head>
+<body>
+<div class="scroller" id="scroller">
+
+<!-- 1 ▸ Титульна -->
+<section id="cover" aria-label="Юрій та Юлія — 19 липня 2026">
+  <div class="canvas reveal visible">
+    <picture>
+      <source media="(orientation: portrait)" srcset="images/01-cover-m.webp">
+      <img src="images/01-cover.webp" alt="Юрій та Юлія запрошують розділити з ними радість народження їхньої сім'ї. 19 липня 2026.">
+    </picture>
+  </div>
+  <a class="scroll-arrow" href="#invitation" id="scrollArrow" aria-label="Гортайте вниз до запрошення">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="5 9 12 16 19 9"/></svg>
+  </a>
+  <div class="countdown" id="countdown" role="timer" aria-label="До весілля залишилось">
+    <span class="unit"><span class="num" id="cd-d">—</span><span class="lbl" id="cd-d-lbl">днів</span></span>
+    <span class="heart" aria-hidden="true">♥</span>
+    <span class="unit"><span class="num" id="cd-h">—</span><span class="lbl">годин</span></span>
+    <span class="heart" aria-hidden="true">♥</span>
+    <span class="unit"><span class="num" id="cd-m">—</span><span class="lbl">хвилин</span></span>
+    <span class="heart" aria-hidden="true">♥</span>
+    <span class="unit"><span class="num" id="cd-s">—</span><span class="lbl">секунд</span></span>
+  </div>
+</section>
+
+<!-- 2 ▸ Запрошення -->
+<section id="invitation" aria-label="Наше запрошення">
+  <div class="canvas reveal">
+    <picture>
+      <source media="(orientation: portrait)" srcset="images/02-invitation-m.webp">
+      <img src="images/02-invitation.webp" alt="Дорогі Сергій, Катя, Меланія і Матвій! З великою радістю запрошуємо розділити з нами один із найважливіших днів у нашому житті — день нашого одруження! З любов'ю, Юрій та Юлія." loading="lazy">
+    </picture>
+  </div>
+</section>
+
+<!-- 3 ▸ Де і коли -->
+<section id="details" aria-label="Де і коли">
+  <div class="canvas reveal">
+    <picture>
+      <source media="(orientation: portrait)" srcset="images/03-details-m.webp">
+      <img src="images/03-details.webp" alt="Церемонія: Церква Успіння Пресвятої Богородиці, Варшава, 12:30, Miodowa 16. Святкування: Villa Mamma, Надажин, 16:00, Pruszkowska 52." loading="lazy">
+    </picture>
+    <a class="hotspot left" target="_blank" rel="noopener"
+       href="https://www.google.com/maps/search/?api=1&query=Miodowa+16%2C+00-246+Warszawa"
+       aria-label="Церемонія на карті Google Maps — Miodowa 16, Warszawa"></a>
+    <a class="hotspot right" target="_blank" rel="noopener"
+       href="https://www.google.com/maps/search/?api=1&query=Villa+Mamma%2C+Pruszkowska+52%2C+05-830+Nadarzyn"
+       aria-label="Святкування на карті Google Maps — Villa Mamma, Pruszkowska 52, Nadarzyn"></a>
+  </div>
+</section>
+
+<!-- 4 ▸ Телеграм-канал -->
+<section id="telegram" aria-label="Наш телеграм-канал">
+  <div class="canvas reveal">
+    <picture>
+      <source media="(orientation: portrait)" srcset="images/04-telegram-m.webp">
+      <img src="images/04-telegram.webp" alt="Будьмо на зв'язку! Всі новини і деталі свята — у нашому телеграм-каналі. Скануйте QR-код або натисніть на нього." loading="lazy">
+    </picture>
+    <a class="hotspot tg-qr" target="_blank" rel="noopener"
+       href="https://t.me/+pQuLXYz93-AwYTMy"
+       aria-label="Відкрити наш телеграм-канал (QR-код)"></a>
+    <a class="hotspot tg-btn" target="_blank" rel="noopener"
+       href="https://t.me/+pQuLXYz93-AwYTMy"
+       aria-label="Наш телеграм-канал"></a>
+  </div>
+</section>
+</div>
+
+<script>
+  /* Плавна поява секцій під час скролу */
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, {threshold:.25});
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  /* Ховаю стрілку після початку скролу */
+  const scroller = document.getElementById('scroller');
+  const arrow = document.getElementById('scrollArrow');
+  scroller.addEventListener('scroll', () => {
+    arrow.classList.toggle('hidden', scroller.scrollTop > scroller.clientHeight * .25);
+  }, {passive:true});
+
+  /* Зворотний відлік до церемонії: 19 липня 2026, 12:30 (Варшава, UTC+2) */
+  const target = new Date('2026-07-19T12:30:00+02:00').getTime();
+  const $ = id => document.getElementById(id);
+  function dayWord(n){
+    const a = n % 10, b = n % 100;
+    if (a === 1 && b !== 11) return 'день';
+    if (a >= 2 && a <= 4 && (b < 10 || b >= 20)) return 'дні';
+    return 'днів';
+  }
+  function tick(){
+    let diff = target - Date.now();
+    if (diff <= 0){
+      $('countdown').innerHTML = '<span class="num">Сьогодні той самий день! ♥</span>';
+      clearInterval(timer);
+      return;
+    }
+    const d = Math.floor(diff / 864e5);
+    const h = Math.floor(diff % 864e5 / 36e5);
+    const m = Math.floor(diff % 36e5 / 6e4);
+    const s = Math.floor(diff % 6e4 / 1e3);
+    $('cd-d').textContent = d;
+    $('cd-d-lbl').textContent = dayWord(d);
+    $('cd-h').textContent = String(h).padStart(2,'0');
+    $('cd-m').textContent = String(m).padStart(2,'0');
+    $('cd-s').textContent = String(s).padStart(2,'0');
+  }
+  tick();
+  const timer = setInterval(tick, 1000);
+</script>
+</body>
+</html>
